@@ -6,3 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rstest = "*"
+mockall = "*"
+
+conditional = "*"
+strum = "*"
+strum_macros = "*"
+itertools = "*"
+
+piston_window = "*"
+rodio = "*"
+rand ="*"
