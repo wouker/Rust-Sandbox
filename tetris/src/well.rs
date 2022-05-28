@@ -13,14 +13,14 @@ pub struct WellPoint {
     pub col_ix: u8
 }
 
-pub trait WellDefaults {
-    fn new() -> Self;   
+pub trait WellDefaults {    
+    fn new(default_value : u8) -> Self;   
     fn get_start_position(&self) -> WellPoint;
 }
 
 impl WellDefaults for Well {
-    fn new() -> Well {
-        empty_well()
+    fn new(default_value : u8) -> Well {
+        empty_well(default_value)
     }
 
     fn get_start_position(&self) -> WellPoint {
@@ -28,8 +28,8 @@ impl WellDefaults for Well {
     }
 }
 
-fn empty_well() -> Well {
-    [[0u8; 10]; 24]
+fn empty_well(default : u8) -> Well {
+    [[default; 10]; 24]
 }
 
 #[cfg(test)]
@@ -37,15 +37,22 @@ mod tests {
     use super::*;
         
     #[test]
-    fn well_new() {
-        let new_well: Well = WellDefaults::new();
+    fn well_new_empty() {
+        let new_well: Well = WellDefaults::new(0);
 
         assert_eq!(new_well, [[0u8; 10]; 24]);            
     }
 
     #[test]
+    fn well_new_filled() {
+        let new_well: Well = WellDefaults::new(1);
+
+        assert_eq!(new_well, [[1u8; 10]; 24]);            
+    }
+
+    #[test]
     fn well_starting_positions() {
-        let new_well: Well = WellDefaults::new();
+        let new_well: Well = WellDefaults::new(0);
         let starting_position = WellDefaults::get_start_position(&new_well);
 
         assert_eq!(starting_position.row_ix, START_ROW);

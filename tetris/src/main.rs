@@ -22,6 +22,7 @@ fn main() {
     let (music_stream, rodio_sink) = get_music_handler();
 
     let mut game_state = GameState::new();
+    let mut blink_counter = 0;
 
     //Piston is event-based engine. so we need to listen to events and act accordingly    
     //no for-loop as it consumes window and we would need borrowing (which requires lifetimes ...)
@@ -38,7 +39,13 @@ fn main() {
             },
 
             Event::Loop(Loop::Update(_)) => {                
-                println!("updating.");
+                if game_state.game_over {
+                    blink_counter = game_state.handle_game_over(blink_counter);                    
+                } else {
+                    //handle play
+                    game_state.game_over = true; //todo temp
+                }
+
             },
 
             // Rust forces you to consider all possible Event types. This "discard all other events" clause satisfies that requirement. 
