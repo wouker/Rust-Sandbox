@@ -1,4 +1,6 @@
-use piston_window::{PistonWindow, WindowSettings, EventLoop};
+use piston_window::{PistonWindow, WindowSettings, EventLoop, Event};
+
+use crate::game_state::GameState;
 
 //todo wouter: learn more about Piston to fool around - for now: use defaults 
 pub fn get_window() -> PistonWindow {
@@ -14,4 +16,15 @@ pub fn get_window() -> PistonWindow {
     window.events.set_ups(30);
 
     window
+}
+
+pub trait TetrisWindow {
+    fn render(&self, event : &Event, game_state: &mut GameState);
+}
+
+impl TetrisWindow for PistonWindow {
+    fn render(&self, event : &Event, _game_state: &mut GameState) {
+        //todo wouter       
+        println!("rendering for event {:?},", event);
+    }
 }

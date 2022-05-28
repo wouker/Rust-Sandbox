@@ -12,7 +12,8 @@ pub struct GameState {
 
     block_row: u8,
     block_col: u8,
-    //todo wouter: fill when relevant
+
+    //todo wouter: fill when relevant: keymap & fallcounter
 }
 
 impl GameState {
