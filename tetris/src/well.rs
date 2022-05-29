@@ -8,6 +8,7 @@ pub type Well = [[u8; 10]; 24];
 const START_ROW : u8 = 2;
 const START_COL : u8 = 3;
 
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct WellPoint {
     pub row_ix: u8,
     pub col_ix: u8

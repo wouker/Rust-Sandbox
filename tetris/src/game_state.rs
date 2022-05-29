@@ -1,5 +1,5 @@
 // keep track of the state of the game during play
-use crate::{well::{Well, WellDefaults}, block_bag::{BlockBag, RandomBag}, block::Block};
+use crate::{well::{Well, WellDefaults, WellPoint}, block_bag::{BlockBag, RandomBag}, block::Block};
 
 #[derive(Debug)]
 pub struct GameState {
@@ -11,8 +11,7 @@ pub struct GameState {
     pub current_block: Block,
     pub next_block: Block,
 
-    pub block_row: u8,
-    pub block_col: u8,
+    pub current_block_point: WellPoint,
 
     //todo wouter: fill when relevant: keymap & fallcounter
 }
@@ -31,8 +30,7 @@ impl GameState {
             block_bag,
             current_block: current,        
             next_block: next,
-            block_row: starting_point.row_ix,
-            block_col: starting_point.col_ix
+            current_block_point: WellPoint { row_ix: starting_point.row_ix, col_ix: starting_point.col_ix },            
         }            
     }
 
@@ -62,8 +60,7 @@ mod tests {
 
         assert!(!new_state.game_over);
         assert_eq!(new_state.well, [[0; 10]; 24]);
-        assert_eq!(new_state.block_row, 2);
-        assert_eq!(new_state.block_col, 3);
+        assert_eq!(new_state.current_block_point, WellPoint { row_ix: 2, col_ix: 3 });
         assert_eq!(new_state.block_bag.len(), 5);
     }
 

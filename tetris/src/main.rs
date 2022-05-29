@@ -4,13 +4,13 @@
 use game_state::GameState;
 use music::get_music_handler;
 use piston_window::{Event, Loop, Input, ButtonState};
-use window::{get_window, TetrisWindow};
+use renderer::{get_window, TetrisWindow};
 
 mod block;
 mod color;
 mod well;
 mod game_state;
-mod window;
+mod renderer;
 mod music;
 mod block_bag;
 
