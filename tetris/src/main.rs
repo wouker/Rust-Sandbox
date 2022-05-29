@@ -3,10 +3,11 @@
 
 use game_state::GameState;
 use music::get_music_handler;
-use piston_window::{Event, Loop};
+use piston_window::{Event, Loop, Input, ButtonState};
 use window::{get_window, TetrisWindow};
 
 mod block;
+mod color;
 mod well;
 mod game_state;
 mod window;
@@ -31,28 +32,57 @@ fn main() {
 
             //vsync = true => render-event per screen refresh (= 60 fps = 60 times)
             Event::Loop(Loop::Render(_)) => {
-                //render(&mut window, &event,
-                //    &game_state.ttmo_row, &game_state.ttmo_col, &game_state.curr_ttmo,
-                //    &game_state.next_ttmo, &mut game_state.well);
-                //let starting_point = WellDefaults::get_start_position(&well);
-                TetrisWindow::render(&window, &event, &mut game_state);
+                TetrisWindow::render(&mut window, &event, &game_state);
             },
 
+            //update event is set to 30 per second (from 120)
             Event::Loop(Loop::Update(_)) => {                
                 if game_state.game_over {
                     blink_counter = game_state.handle_game_over(blink_counter);                    
                 } else {
                     //handle play
-                    game_state.game_over = true; //todo temp
+                    game_update(&mut game_state);
+
+                    //todo wouter handle music (and move to music-mod)
+                    /* if game_state.game_over {
+                       music_sink.stop();
+                    } else {
+                        if music_sink.empty() {
+                           let music_file = File::open("NESTetrisMusic3.ogg").unwrap();    // Path relative to Cargo.toml
+                           let music_source = rodio::Decoder::new(BufReader::new(music_file)).unwrap();
+                           music_sink.append(music_source);
+                           music_sink.play();
+                       }
+                   } */
                 }
 
             },
 
-            // Rust forces you to consider all possible Event types. This "discard all other events" clause satisfies that requirement. 
-            // other are AfterRender & Idle
-            _ => {
-                //dbg!(event); //occurs a lot                  
-            }
+            Event::Input(Input::Button(button_args), _time_stamp) => { 
+                //key pressed only
+                if button_args.state == ButtonState::Press {
+                    store_key_pressed(&mut game_state, button_args);
+                }
+            },
+
+            // ignore the other piston-events
+            _ => { }
         }
     }
+}
+
+fn game_update (_game_state : &GameState) {
+    //todo wouter: actual update while playing
+
+    //todo wouter: once working: add a level-layer. each level each reached on number of points.
+    //higher level is higher speed.
+    //level is score multiplier
+    //implement achievements (lvl 1- 5- 10 ...// 4 rows in 1 // ...)
+}
+
+fn store_key_pressed(game_state: &mut GameState, button_args: piston_window::ButtonArgs) {
+    //todo wouter: handle key_pressed-event: we simply store listened keys to gamestate 
+    //todo wouter: create enum to store mapped-key/action
+    dbg!(game_state);
+    dbg!(button_args);
 }

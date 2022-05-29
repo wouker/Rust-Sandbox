@@ -1,6 +1,7 @@
 // keep track of the state of the game during play
 use crate::{well::{Well, WellDefaults}, block_bag::{BlockBag, RandomBag}, block::Block};
 
+#[derive(Debug)]
 pub struct GameState {
     pub game_over: bool,
 
