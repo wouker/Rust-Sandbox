@@ -75,6 +75,7 @@ fn draw_well(_window: &mut PistonWindow, _event: &Event, _well: Well) {
     println!("drawing well");
 }
 
+#[allow(dead_code)]
 fn draw_all_blocks(window: &mut PistonWindow, event: &Event) {
     for col_ix in 0..WELL_COLUMN_COUNT {
         for row_ix in 0..WELL_ROW_COUNT {

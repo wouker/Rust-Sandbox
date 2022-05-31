@@ -1,6 +1,9 @@
 // keep track of the state of the game during play
 use crate::{well::{Well, WellDefaults, WellPoint}, block_bag::{BlockBag, RandomBag}, block::Block};
 
+//how lower speed, how quicker. speed 1 is on each update
+const DEFAULT_SPEED: u8 = 20;
+
 #[derive(Debug)]
 pub struct GameState {
     pub game_over: bool,
@@ -13,7 +16,9 @@ pub struct GameState {
 
     pub current_block_point: WellPoint,
 
-    //todo wouter: fill when relevant: keymap & fallcounter
+    pub executed_actions: Vec<Actions>,
+    pub block_fall_counter: u8,
+    pub current_speed: u8
 }
 
 impl GameState {
@@ -30,7 +35,10 @@ impl GameState {
             block_bag,
             current_block: current,        
             next_block: next,
-            current_block_point: WellPoint { row_ix: starting_point.row_ix, col_ix: starting_point.col_ix },            
+            current_block_point: WellPoint { row_ix: starting_point.row_ix, col_ix: starting_point.col_ix },  
+            executed_actions: Vec::new(),
+            block_fall_counter: 0,
+            current_speed: DEFAULT_SPEED  
         }            
     }
 
@@ -49,9 +57,19 @@ impl GameState {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub enum Actions {
+    MoveLeft,
+    MoveRight,
+    RotateClockWise,
+    //RotateCounterClockWise,
+    Drop,
+    DropHard
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::well::{WELL_COLUMN_COUNT, WELL_ROW_COUNT};
+    use crate::well::{WELL_COLUMN_COUNT, WELL_ROW_COUNT, START_ROW, START_COL};
 
     use super::*;
     use rstest::rstest;
@@ -62,8 +80,11 @@ mod tests {
 
         assert!(!new_state.game_over);
         assert_eq!(new_state.well, [[0; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]);
-        assert_eq!(new_state.current_block_point, WellPoint { row_ix: 2, col_ix: 3 });
+        assert_eq!(new_state.current_block_point, WellPoint { row_ix: START_ROW, col_ix: START_COL });
         assert_eq!(new_state.block_bag.len(), 5);
+        assert_eq!(new_state.executed_actions, Vec::new());
+        assert_eq!(new_state.block_fall_counter,0);
+        assert_eq!(new_state.current_speed, DEFAULT_SPEED);
     }
 
     #[rstest]

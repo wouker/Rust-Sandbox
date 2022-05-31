@@ -6,8 +6,8 @@ pub type Well = [[u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT];
 pub const WELL_COLUMN_COUNT : usize = 14;
 pub const WELL_ROW_COUNT : usize = 28;
 
-const START_ROW : u8 = 1;
-const START_COL : u8 = 5;
+pub const START_ROW : u8 = 1;
+pub const START_COL : u8 = 5;
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct WellPoint {
