@@ -1,12 +1,13 @@
 // a Tetris-playfield is called a well
-// the playfield is 10 columns wide and 24 rows high
-// so we create a 10x24-matrix
-// inner array = rows - spread over 24 columns
 // low row = high up the well
-pub type Well = [[u8; 10]; 24];
+// normally 10 rows by 24 cols, but we go for 14 by 20
+pub type Well = [[u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT];
 
-const START_ROW : u8 = 2;
-const START_COL : u8 = 3;
+pub const WELL_COLUMN_COUNT : usize = 14;
+pub const WELL_ROW_COUNT : usize = 28;
+
+const START_ROW : u8 = 1;
+const START_COL : u8 = 5;
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct WellPoint {
@@ -25,12 +26,13 @@ impl WellDefaults for Well {
     }
 
     fn get_start_position(&self) -> WellPoint {
+        //our const is 1-based for readability, our index 0-based (row 1 = index 0)
         WellPoint { row_ix: START_ROW, col_ix: START_COL }
     }
 }
 
 fn empty_well(default : u8) -> Well {
-    [[default; 10]; 24]
+    [[default; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]
 }
 
 #[cfg(test)]
@@ -41,14 +43,14 @@ mod tests {
     fn well_new_empty() {
         let new_well: Well = WellDefaults::new(0);
 
-        assert_eq!(new_well, [[0u8; 10]; 24]);            
+        assert_eq!(new_well, [[0u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]);            
     }
 
     #[test]
     fn well_new_filled() {
         let new_well: Well = WellDefaults::new(1);
 
-        assert_eq!(new_well, [[1u8; 10]; 24]);            
+        assert_eq!(new_well, [[1u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]);            
     }
 
     #[test]

@@ -51,6 +51,8 @@ impl GameState {
 
 #[cfg(test)]
 mod tests {
+    use crate::well::{WELL_COLUMN_COUNT, WELL_ROW_COUNT};
+
     use super::*;
     use rstest::rstest;
 
@@ -59,19 +61,19 @@ mod tests {
         let new_state = GameState::new();
 
         assert!(!new_state.game_over);
-        assert_eq!(new_state.well, [[0; 10]; 24]);
+        assert_eq!(new_state.well, [[0; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]);
         assert_eq!(new_state.current_block_point, WellPoint { row_ix: 2, col_ix: 3 });
         assert_eq!(new_state.block_bag.len(), 5);
     }
 
     #[rstest]
-    #[case(15, [[0; 10]; 24])]
-    #[case(30, [[1; 10]; 24])]    
-    #[case(8, [[2; 10]; 24])]    
-    #[case(88, [[2; 10]; 24])]    
+    #[case(15, [[0; WELL_COLUMN_COUNT]; WELL_ROW_COUNT])]
+    #[case(30, [[1; WELL_COLUMN_COUNT]; WELL_ROW_COUNT])]    
+    #[case(8, [[2; WELL_COLUMN_COUNT]; WELL_ROW_COUNT])]    
+    #[case(88, [[2; WELL_COLUMN_COUNT]; WELL_ROW_COUNT])]    
     fn game_state_game_over(#[case] blink_counter: i32, #[case] expected_well : Well ) {
         //2 is a faulty-well-state in reality, but makes it easy to test if well has been updated on game over
-        let test_well = [[2; 10]; 24];
+        let test_well = [[2; WELL_COLUMN_COUNT]; WELL_ROW_COUNT];
 
         let mut game_state = GameState::new();
         game_state.well = test_well;

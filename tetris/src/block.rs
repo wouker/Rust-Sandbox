@@ -55,7 +55,7 @@ impl BlockShape {
         BlockShape { shape }        
     }
 
-    fn into_array(self) -> [[u8; 4]; 4] {
+    pub fn into_array(self) -> [[u8; 4]; 4] {
         self.shape
     }    
 }
