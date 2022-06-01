@@ -80,8 +80,8 @@ fn draw_all_blocks(window: &mut PistonWindow, event: &Event) {
     for col_ix in 0..WELL_COLUMN_COUNT {
         for row_ix in 0..WELL_ROW_COUNT {
             let point = WellPoint {
-                row_ix: row_ix as u8,
-                col_ix: col_ix as u8,
+                row_ix: row_ix as i8,
+                col_ix: col_ix as i8,
             };
             
             let color: [f32; 4] = Color::WHITE.into();
@@ -134,9 +134,11 @@ fn draw_next_block(_window: &mut PistonWindow, _event: &Event, _next_block: Bloc
 impl From<WellPoint> for (f64, f64) {
     fn from(well_point: WellPoint) -> Self {
         // The pixel value is the upper-left-most pixel of the square at the given well coordinate.
-        let x = ((well_point.col_ix) as usize * BLOCK_SPACE_SIZE_PX) as f64 + PLAYFIELD_OFFSET_LEFT;
-        let y = ((well_point.row_ix) as usize * BLOCK_SPACE_SIZE_PX) as f64 + PLAYFIELD_OFFSET_TOP;
+        let x = (well_point.col_ix as i32 * (BLOCK_SPACE_SIZE_PX as i32)) as f64 + PLAYFIELD_OFFSET_LEFT;
+        let y = (well_point.row_ix as i32 * (BLOCK_SPACE_SIZE_PX as i32)) as f64 + PLAYFIELD_OFFSET_TOP;
 
         (x, y)
     }
 }
+
+//todo wouter: unittest to avoid overflow + the to i32 assignments in from-method feel dirty

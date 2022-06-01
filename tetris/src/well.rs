@@ -6,13 +6,14 @@ pub type Well = [[u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT];
 pub const WELL_COLUMN_COUNT : usize = 14;
 pub const WELL_ROW_COUNT : usize = 28;
 
-pub const START_ROW : u8 = 1;
-pub const START_COL : u8 = 5;
+pub const START_ROW : i8 = 1;
+pub const START_COL : i8 = 5;
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct WellPoint {
-    pub row_ix: u8,
-    pub col_ix: u8
+    //a column & row can be negative as it indicates the topleft of a block. so we can go to -3 if the actual parts are on the outer sides
+    pub row_ix: i8,    
+    pub col_ix: i8
 }
 
 pub trait WellDefaults {    
@@ -27,7 +28,7 @@ impl WellDefaults for Well {
 
     fn get_start_position(&self) -> WellPoint {
         //our const is 1-based for readability, our index 0-based (row 1 = index 0)
-        WellPoint { row_ix: START_ROW, col_ix: START_COL }
+        WellPoint { row_ix: START_ROW as i8, col_ix: START_COL as i8 }
     }
 }
 
