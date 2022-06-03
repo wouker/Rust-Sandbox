@@ -1,12 +1,13 @@
 //todo wouter: remove later on when more is implemented
 //#![allow(dead_code)]
 
+use block_bag::RandomBag;
 use game_state::{GameState, Actions};
 use movements::{move_block, is_move_blocked};
 use music::get_music_handler;
 use piston_window::{Event, Loop, Input, ButtonState, Button, Key};
 use renderer::{get_window, TetrisWindow};
-use well::WellPoint;
+use well::{WellPoint, Freeze, WellDefaults};
 
 mod block;
 mod color;
@@ -89,18 +90,17 @@ fn game_update (game_state : &mut GameState) {
         if is_move_blocked(&game_state.current_block, &game_state.well, new_point) {
             //if we can't move while falling, we need to 'save' the block to the well and pick a new one
             //also we need to check if we aren't gameover. this happens when the saved block would exceed to 0-row at any part
-        } else {
-            game_state.current_block_point.row_ix += 1;
-        }
-        //todo handle collisions
-        /* if would_collide(&game_state.curr_ttmo, &game_state.well, &(game_state.ttmo_row + 1), &game_state.ttmo_col)
-        {
-            freeze_to_well(&game_state.curr_ttmo, &mut game_state.well, &game_state.ttmo_row, &game_state.ttmo_col);
-            game_state.well = clear_complete_rows(game_state.well);
+            Freeze::freeze_block(&mut game_state.well, &game_state.current_block, &game_state.current_block_point);
+            
+            //switch blocks
+            game_state.current_block = game_state.next_block;
+            game_state.next_block = game_state.block_bag.pop().unwrap();
+            game_state.current_block_point = WellDefaults::get_start_position(&game_state.well);
+            RandomBag::refresh_if_needed(&mut game_state.block_bag);
 
-            if game_state.ttmo_bag.is_empty() { game_state.ttmo_bag = create_random_bag(); }
-            game_state.curr_ttmo = game_state.next_ttmo;
-            game_state.next_ttmo = game_state.ttmo_bag.pop().unwrap();
+
+            /* TODO
+             game_state.well = clear_complete_rows(game_state.well);
 
             game_state.ttmo_row = 2;    // Place near top...
             game_state.ttmo_col = 3;    // ...and near center.
@@ -110,10 +110,11 @@ fn game_update (game_state : &mut GameState) {
             {
                 game_state.game_over = true;
             }
+            */
+        } else {
+            game_state.current_block_point.row_ix += 1;
         }
-          
-        else { game_state.ttmo_row += 1; }    // Move curr piece down one row.
-    } */
+       
         //reset counter for next row-drop
         game_state.block_fall_counter = 0;
     }

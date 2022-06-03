@@ -19,6 +19,7 @@ impl Color {
     pub const PINK : Color = Color { r: 255, g: 0, b: 255 };
     pub const AQUAMARINE : Color = Color { r: 128, g: 128, b: 128 };
     pub const LILA : Color = Color { r: 204, g: 153, b: 255 };
+    pub const GRAY : Color = Color { r: 192, g: 192, b: 192 };
 }
 
 impl From<Color> for types::Color {

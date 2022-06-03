@@ -35,7 +35,7 @@ impl GameState {
             block_bag,
             current_block: current,        
             next_block: next,
-            current_block_point: WellPoint { row_ix: starting_point.row_ix, col_ix: starting_point.col_ix },  
+            current_block_point: starting_point,  
             executed_actions: Vec::new(),
             block_fall_counter: 0,
             current_speed: DEFAULT_SPEED  

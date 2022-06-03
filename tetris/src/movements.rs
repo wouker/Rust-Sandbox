@@ -11,7 +11,7 @@ pub fn move_block(block: &Block, well: &Well, current_point : &mut WellPoint, is
     }
 }
 
-pub fn is_move_blocked(block : &Block, _well: &Well, new_block_point: WellPoint) -> bool {
+pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) -> bool {
     //we move a block. potentially all items can be in a single row or a single column, on either side of the block
     //so we need to find the most left - right - top and bottom of a piece and check if we do not hit anything (we just iterate all found parts till we hit something)
     //this can be the border of the well or an part of another block in the well
@@ -38,8 +38,9 @@ pub fn is_move_blocked(block : &Block, _well: &Well, new_block_point: WellPoint)
                 return true;
             }
 
-            //todo: check if these coördinates are not yet taken by another part            
-            //if well[well_row as usize][well_col as usize] != 0 { return true; }
+            if well[new_well_row_ix as usize][new_well_col_ix as usize] == 1u8 {
+                return true;
+            }
         }
     }
 

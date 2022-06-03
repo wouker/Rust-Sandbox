@@ -20,11 +20,18 @@ fn get_random_block_bag() -> BlockBag {
 
 pub trait RandomBag {
     fn get() -> Self;
+    fn refresh_if_needed(&mut self);
 }
 
 impl RandomBag for BlockBag {
     fn get() -> BlockBag {
         get_random_block_bag()
+    }
+
+    fn refresh_if_needed(&mut self) {
+        if self.len() == 3 {
+            self.append(&mut get_random_block_bag());
+        }
     }
 }
 

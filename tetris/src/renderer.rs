@@ -70,9 +70,43 @@ impl TetrisWindow for PistonWindow {
     }
 }
 
-fn draw_well(_window: &mut PistonWindow, _event: &Event, _well: Well) {
-    //todo draw well once we have items in them
-    println!("drawing well");
+fn draw_well(window: &mut PistonWindow, event: &Event, well: Well) {
+    for (row_ix, row) in well.iter().enumerate() {
+        for (col_ix, value) in row.iter().enumerate() {
+            if *value == 1u8 {
+                //only draw when there is a part
+                let point = WellPoint {
+                    row_ix: row_ix as i8,
+                    col_ix: col_ix as i8,
+                };
+                
+                let color: [f32; 4] = Color::GRAY.into();
+                let (x,y) = point.into();
+                draw_part(window, event, x, y, 0, 0, color);
+            }
+        }
+    }
+
+    /*
+    
+/// Renders the squares of the given playfield.
+fn draw_well_blocks(win: &mut PistonWindow, e: &Event, well: &Well)
+{
+    for row in 0..24 {
+        for col in 0..10 {
+            
+            if well[row][col] == 0 { continue; }    // No square to be drawn here.
+
+            let (x_offs, y_offs) = well_to_pixel(row as i32, col as i32);
+            win.draw_2d(e,
+                |context, graphics, _device| {
+                    // Draw 33x33 square inside 35x35 space.
+                    rectangle( [1.0, 1.0, 1.0, 1.0], [x_offs + 1.0, y_offs + 1.0, 33.0, 33.0], context.transform, graphics);
+                }
+            );
+        }
+    }
+} */
 }
 
 #[allow(dead_code)]
