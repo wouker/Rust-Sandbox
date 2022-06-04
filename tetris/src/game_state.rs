@@ -81,7 +81,7 @@ mod tests {
         assert!(!new_state.game_over);
         assert_eq!(new_state.well, [[0; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]);
         assert_eq!(new_state.current_block_point, WellPoint { row_ix: START_ROW, col_ix: START_COL });
-        assert_eq!(new_state.block_bag.len(), 5);
+        assert_eq!(new_state.block_bag.len(), 19);
         assert_eq!(new_state.executed_actions, Vec::new());
         assert_eq!(new_state.block_fall_counter,0);
         assert_eq!(new_state.current_speed, DEFAULT_SPEED);
