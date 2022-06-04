@@ -42,7 +42,6 @@ pub trait Freeze {
 impl Freeze for Well {
     fn freeze_block(&mut self, current_block : &Block, position : &WellPoint) {
         //get coördinates of current blockparts and save them to well
-        //todo wouter
         for (i, row) in current_block.shape.into_array().iter().enumerate() {            
             for (j, value) in row.iter().enumerate() {                
                 // if no part on this position of the block, we can't hit anything
@@ -54,42 +53,6 @@ impl Freeze for Well {
                 self[well_row_ix][well_col_ix] = *value;
             }
         }
-        /*/// Copies the given tetrimino's squares into the given well at the given (well_row, well_col).
-fn freeze_to_well(ttmo: &Tetrimino, well: &mut Well, well_row: &i32, well_col: &i32)
-{
-    for row in 0..4 {
-        for col in 0..4 {
-            if ttmo.shape[row][col] == 0 { continue; }
-            // println!("well[{}][{}] = 1", (*well_row + row as i32) as usize, (*well_col + col as i32) as usize);
-            well[(*well_row + row as i32) as usize][(*well_col + col as i32) as usize] = ttmo.shape[row][col];
-        }
-    }
-} */
-        /*for (i, row) in block.shape.into_array().iter().enumerate() {            
-        for (j, value) in row.iter().enumerate() {                
-            // if no part on this position of the block, we can't hit anything
-            if value == &0u8 {                
-                continue;
-            }
-
-            //if a part is found, we need to calculate the exact position in the well it will be
-            //the new_block_point always refers to the topleft part of a block (even if that part is empty)
-            let new_well_row_ix = new_block_point.row_ix + i as i8;
-            let new_well_col_ix = new_block_point.col_ix  + j as i8;
-            
-            //check if these coördinates lay inside the bounds of the well
-            if new_well_row_ix == WELL_ROW_COUNT as i8 {
-                //hits bottom
-                return true;
-            }
-            if new_well_col_ix == -1 || new_well_col_ix == WELL_COLUMN_COUNT as i8 {
-                return true;
-            }
-
-            //todo: check if these coördinates are not yet taken by another part            
-            //if well[well_row as usize][well_col as usize] != 0 { return true; }
-        }
-    } */
     }
 }
 
@@ -99,6 +62,8 @@ fn empty_well(default : u8) -> Well {
 
 #[cfg(test)]
 mod tests {
+    use crate::block::BlockType;
+
     use super::*;
         
     #[test]
@@ -123,4 +88,24 @@ mod tests {
         assert_eq!(starting_position.row_ix, START_ROW);
         assert_eq!(starting_position.col_ix, START_COL);      
     }     
+
+    #[test]
+    fn well_freeze() {
+        let new_well: &mut Well = &mut WellDefaults::new(0);
+
+        let block = Block::new(BlockType::I);
+        let position = WellPoint { row_ix: 20, col_ix: 0 };
+
+        Freeze::freeze_block(new_well, &block, &position);
+
+        assert_eq!(new_well[19][2], 0);
+        assert_eq!(new_well[20][0], 0);
+        assert_eq!(new_well[20][1], 0);
+        assert_eq!(new_well[20][2], 1);
+        assert_eq!(new_well[21][0], 0);  
+        assert_eq!(new_well[21][1], 0);  
+        assert_eq!(new_well[21][2], 1);
+        assert_eq!(new_well[22][2], 1);
+        assert_eq!(new_well[23][2], 1);
+    }
 }
