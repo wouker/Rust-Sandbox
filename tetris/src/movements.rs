@@ -48,5 +48,65 @@ pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) 
     false
 }
 
+#[cfg(test)]
+mod tests {
+    use rstest::rstest;
 
-//todo wouter: unittest this shit
+    use crate::well::WellDefaults;
+    use crate::block::BlockType;
+
+    use super::*;
+
+    #[test]
+    fn move_block_left() {
+        let block = Block::new(crate::block::BlockType::O);
+        let block_point = &mut WellPoint { row_ix: 10, col_ix: 5 };
+        let well = &mut WellDefaults::new(0);
+
+        move_block(&block, well, block_point, true);
+
+        assert_eq!(block_point.col_ix, 4);
+        assert_eq!(block_point.row_ix, 10);
+    }
+
+    #[test]
+    fn move_block_right() {
+        let block = Block::new(crate::block::BlockType::O);
+        let block_point = &mut WellPoint { row_ix: 10, col_ix: 5 };
+        let well = &mut WellDefaults::new(0);
+
+        move_block(&block, well, block_point, false);
+
+        assert_eq!(block_point.col_ix, 6);
+        assert_eq!(block_point.row_ix, 10);
+    }
+
+    #[rstest]
+    #[case(WellPoint { row_ix: 0, col_ix: 5 }, false)] 
+    #[case(WellPoint { row_ix: 20, col_ix: 4 }, true)] 
+    #[case(WellPoint { row_ix: 20, col_ix: 5 }, true)] 
+    #[case(WellPoint { row_ix: 0, col_ix: 0 }, false)] 
+    #[case(WellPoint { row_ix: 0, col_ix: -1 }, true)] 
+    #[case(WellPoint { row_ix: 0, col_ix: (WELL_COLUMN_COUNT - 4) as i8 }, false)] 
+    #[case(WellPoint { row_ix: 0, col_ix: (WELL_COLUMN_COUNT - 3) as i8 }, false)] 
+    #[case(WellPoint { row_ix: 0, col_ix: (WELL_COLUMN_COUNT - 2) as i8 }, true)] 
+    #[case(WellPoint { row_ix: WELL_ROW_COUNT as i8, col_ix: 5 }, true)] 
+    #[case(WellPoint { row_ix: (WELL_ROW_COUNT - 4) as i8, col_ix: 5 }, false)] 
+    #[case(WellPoint { row_ix: (WELL_ROW_COUNT - 3) as i8, col_ix: 5 }, false)] 
+    #[case(WellPoint { row_ix: (WELL_ROW_COUNT - 2) as i8, col_ix: 5 }, false)] 
+    #[case(WellPoint { row_ix: (WELL_ROW_COUNT - 1) as i8, col_ix: 5 }, true)]
+    #[case(WellPoint { row_ix: 19, col_ix: 4 }, true)] 
+    fn is_move_blocked_for_case(#[case] new_point: WellPoint, #[case] expected: bool) {
+        //shape:  BlockShape::new([[0,0],[0,1],[1,1],[1,2]])
+        let block = Block::new(BlockType::Z); 
+        let well: &mut Well = &mut WellDefaults::new(0);
+        well[20][4] = 1;
+        well[20][5] = 1;
+        well[21][4] = 1;
+        well[22][5] = 1;
+
+        let result = is_move_blocked(&block, well, new_point);
+
+        assert_eq!(result, expected);
+    }    
+}
