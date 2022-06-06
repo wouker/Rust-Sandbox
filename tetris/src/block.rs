@@ -58,6 +58,8 @@ impl BlockShape {
     pub fn into_array(self) -> [[u8; 4]; 4] {
         self.shape
     }    
+
+    //todo wouter: we need to call block.shape.shape for indexing. try to index directly on block.shape
 }
 
 //todo wouter later: implement rotate R/L on BlockShape to alter shape on rotation
@@ -110,6 +112,27 @@ impl Block {
             }
         }          
     }
+
+    pub fn rotate_clockwise(&mut self) {
+        if self.block_type == BlockType::O {
+            return;
+        }
+
+        //rotate to new vector as otherwise, we overwrite inside loop fields that aren't fixed 
+        let mut new_shape: BlockShapeType = [[0; 4];4];
+
+        for (i, row) in self.shape.into_array().iter().enumerate() {            
+            for (j, value) in row.iter().enumerate() {                
+                if self.block_type == BlockType::I {
+                    new_shape[i][j] = self.shape.shape[j][i];
+                } else if *value == 1u8 {
+                    new_shape[j][2-i] = 1;
+                }
+            }
+        }
+
+        self.shape.shape = new_shape;
+    }
 }
 
 #[cfg(test)]
@@ -142,5 +165,24 @@ mod tests {
                 assert_eq!(*value, conditional!(active_positions.contains(&[i,j]) ? 1 : 0));
             }
         }  
+    }
+
+    #[rstest]
+    #[case(BlockType::I, 1, [[2,0],[2,1],[2,2],[2,3]])]
+    #[case(BlockType::I, 2, [[0,2],[1,2],[2,2],[3,2]])]
+    //todo: all other blocks
+    fn block_clockwise(#[case] block_type: BlockType, #[case] number_of_rotations: u8, #[case] active_positions : [[usize;2];4]) {
+        
+        let mut block = Block::new(block_type);
+        
+        for _ in 0..number_of_rotations {
+            block.rotate_clockwise();
+        }
+        
+        for (i, row) in block.shape.into_array().iter().enumerate() {            
+            for (j, value) in row.iter().enumerate() {                
+                assert_eq!(*value, conditional!(active_positions.contains(&[i,j]) ? 1 : 0));
+            }
+        }
     }
 }

@@ -124,6 +124,7 @@ fn game_update (game_state : &mut GameState) {
         match action {
             Actions::MoveLeft => move_block(&game_state.current_block, &game_state.well, &mut game_state.current_block_point, true),
             Actions::MoveRight => move_block(&game_state.current_block, &game_state.well, &mut game_state.current_block_point, false),
+            Actions::RotateClockWise => game_state.current_block.rotate_clockwise(),
             //todo: handle drops & rotations
             _ => ()
         }

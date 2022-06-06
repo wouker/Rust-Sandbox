@@ -48,6 +48,8 @@ pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) 
     false
 }
 
+//todo wouter: when O-block hits bottom, we crash for some reason...
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;

@@ -162,7 +162,6 @@ fn draw_part(window: &mut PistonWindow, event: &Event, x_offset :f64, y_offset: 
 
 fn draw_next_block(_window: &mut PistonWindow, _event: &Event, _next_block: Block) {
     //todo draw next block on fixed position (in seperate panel)
-    println!("drawing next block");
 }
 
 impl From<WellPoint> for (f64, f64) {
