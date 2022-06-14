@@ -8,7 +8,32 @@ pub fn move_block(block: &Block, well: &Well, current_point : &mut WellPoint, is
     
     if !is_move_blocked(block, well, new_well_point)  {
         current_point.col_ix = new_col_ix;
+        println!("new point {:?}", new_well_point);
     }
+}
+
+pub fn drop_block(block: &Block, well: &Well, current_point : &mut WellPoint) {
+
+    let new_row_ix = current_point.row_ix + 1;
+    let new_well_point = WellPoint { row_ix: new_row_ix, col_ix: current_point.col_ix };
+
+    if !is_move_blocked(block, well, new_well_point)  {
+        current_point.row_ix = new_row_ix;
+        println!("new point {:?}", new_well_point);
+    }
+}
+
+//todo add param for diff cw/ccw
+pub fn rotate(block: &mut Block, well: &Well, current_point : &mut WellPoint)
+{    
+    block.rotate_clockwise();
+    if is_move_blocked(block, well, *current_point) {
+        //todo check if not blocked by this, otherwise, rotate back
+        //temp: rotate CW 3 times again: we are at start again - remove when we van CCW
+        block.rotate_clockwise();
+        block.rotate_clockwise();
+        block.rotate_clockwise();
+    }        
 }
 
 pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) -> bool {
@@ -26,19 +51,22 @@ pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) 
 
             //if a part is found, we need to calculate the exact position in the well it will be
             //the new_block_point always refers to the topleft part of a block (even if that part is empty)
-            let new_well_row_ix = new_block_point.row_ix + i as i8;
-            let new_well_col_ix = new_block_point.col_ix  + j as i8;
+            let part_row_ix = new_block_point.row_ix + i as i8;
+            let part_col_ix = new_block_point.col_ix  + j as i8;
             
             //check if these coördinates lay inside the bounds of the well
-            if new_well_row_ix == WELL_ROW_COUNT as i8 {
+            if part_row_ix == WELL_ROW_COUNT as i8 {
                 //hits bottom
                 return true;
             }
-            if new_well_col_ix == -1 || new_well_col_ix == WELL_COLUMN_COUNT as i8 {
+            if part_col_ix == -1 || part_col_ix == WELL_COLUMN_COUNT as i8 {
+                //hits boundary left or right
                 return true;
             }
-
-            if well[new_well_row_ix as usize][new_well_col_ix as usize] == 1u8 {
+            if part_col_ix < 0 || part_row_ix < 0 {
+                panic!("on ismove blocked, we encountered negative blockparts that are active");
+            }
+            if well[part_row_ix as usize][part_col_ix as usize] == 1u8 {
                 return true;
             }
         }
@@ -48,7 +76,7 @@ pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) 
     false
 }
 
-//todo wouter: when O-block hits bottom, we crash for some reason...
+//todo wouter: when O-block hits leftbottom, we crash for some reason (colix out of range)...
 
 #[cfg(test)]
 mod tests {

@@ -102,7 +102,7 @@ impl Block {
             },
             BlockType::O => Block {
                 block_type: BlockType::O,
-                color: Color::AQUAMARINE,
+                color: Color::LILA,
                 shape:  BlockShape::new([[0,1],[0,2],[1,1],[1,2]]),
             },
             BlockType::T => Block {

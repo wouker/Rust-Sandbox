@@ -3,7 +3,7 @@
 
 use block_bag::RandomBag;
 use game_state::{GameState, Actions};
-use movements::{move_block, is_move_blocked};
+use movements::{move_block, drop_block, is_move_blocked, rotate};
 use music::get_music_handler;
 use piston_window::{Event, Loop, Input, ButtonState, Button, Key};
 use renderer::{get_window, TetrisWindow};
@@ -124,8 +124,8 @@ fn game_update (game_state : &mut GameState) {
         match action {
             Actions::MoveLeft => move_block(&game_state.current_block, &game_state.well, &mut game_state.current_block_point, true),
             Actions::MoveRight => move_block(&game_state.current_block, &game_state.well, &mut game_state.current_block_point, false),
-            Actions::RotateClockWise => game_state.current_block.rotate_clockwise(),
-            //todo: handle drops & rotations
+            Actions::RotateClockWise => rotate(&mut game_state.current_block, &game_state.well, &mut game_state.current_block_point),
+            Actions::Drop => drop_block(&game_state.current_block, &game_state.well, &mut game_state.current_block_point),
             _ => ()
         }
     }
@@ -133,10 +133,6 @@ fn game_update (game_state : &mut GameState) {
     game_state.executed_actions.clear();
         /*
 
-
-// SoftDrop
-if game_state.key_map[4] && !would_collide(&game_state.curr_ttmo, &game_state.well, &(game_state.ttmo_row + 1), &game_state.ttmo_col)
-{ game_state.ttmo_row += 1; }
 
 // HardDrop
 if game_state.key_map[5]
@@ -146,26 +142,8 @@ for row in game_state.ttmo_row..24 {
         game_state.ttmo_row = row - 1;
         break;
     }
-}
-}
-
-// RotateCCW
-if game_state.key_map[2] {
-rotate_tetrimino(&mut game_state.curr_ttmo, false);
-if would_collide(&game_state.curr_ttmo, &game_state.well, &game_state.ttmo_row, &game_state.ttmo_col) {
-    rotate_tetrimino(&mut game_state.curr_ttmo, true);
-}
-}
-
-// RotateCW
-if game_state.key_map[3] {
-rotate_tetrimino(&mut game_state.curr_ttmo, true);
-if would_collide(&game_state.curr_ttmo, &game_state.well, &game_state.ttmo_row, &game_state.ttmo_col) {
-    rotate_tetrimino(&mut game_state.curr_ttmo, false);
-}
 
 */
-
 
     //todo wouter: once working: add a level-layer. each level each reached on number of points.
     //higher level is higher speed.

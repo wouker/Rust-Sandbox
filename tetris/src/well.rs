@@ -48,9 +48,9 @@ impl Freeze for Well {
                 if value == &0u8 {                
                     continue;
                 }
-                let well_row_ix = i + position.row_ix as usize;
-                let well_col_ix = j + position.col_ix as usize;
-                self[well_row_ix][well_col_ix] = *value;
+                let well_row_ix = (i as i8 + position.row_ix) as usize;
+                let well_col_ix = (j as i8 + position.col_ix) as usize;
+                self[well_row_ix][well_col_ix] = 1;
             }
         }
     }

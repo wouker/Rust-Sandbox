@@ -7,7 +7,9 @@ pub type BlockBag = Vec<Block>;
 
 fn get_random_block_bag() -> BlockBag {
     let mut block_bag = BlockBag::new();
-
+    
+    //we shuffle 3 sets of blocks together for a bit variance.
+    //this way, it should feel more random vs. fixed set of 7
     block_bag.append(&mut get_new_block_bag());
     block_bag.append(&mut get_new_block_bag());
     block_bag.append(&mut get_new_block_bag());
@@ -20,9 +22,7 @@ fn get_random_block_bag() -> BlockBag {
 
 fn get_new_block_bag() -> BlockBag {
     let mut block_bag = BlockBag::new();
-
-    //we shuffle 3 sets of blocks together for a bit variance.
-    //this way, it should feel more random vs. fixed set of 7
+       
     for block_type in BlockType::iter() {
         block_bag.push(Block::new(block_type));
     }
