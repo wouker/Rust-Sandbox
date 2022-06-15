@@ -64,7 +64,8 @@ pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) 
                 return true;
             }
             if part_col_ix < 0 || part_row_ix < 0 {
-                panic!("on ismove blocked, we encountered negative blockparts that are active");
+                //rotating made part of the block fall outside of bounds, so declare as blocked
+                return true;
             }
             if well[part_row_ix as usize][part_col_ix as usize] == 1u8 {
                 return true;
@@ -82,7 +83,7 @@ pub fn is_move_blocked(block : &Block, well: &Well, new_block_point: WellPoint) 
 mod tests {
     use rstest::rstest;
 
-    use crate::well::WellDefaults;
+    use crate::well::WellActions;
     use crate::block::BlockType;
 
     use super::*;
@@ -91,7 +92,7 @@ mod tests {
     fn move_block_left() {
         let block = Block::new(crate::block::BlockType::O);
         let block_point = &mut WellPoint { row_ix: 10, col_ix: 5 };
-        let well = &mut WellDefaults::new(0);
+        let well = &mut WellActions::new(0);
 
         move_block(&block, well, block_point, true);
 
@@ -103,7 +104,7 @@ mod tests {
     fn move_block_right() {
         let block = Block::new(crate::block::BlockType::O);
         let block_point = &mut WellPoint { row_ix: 10, col_ix: 5 };
-        let well = &mut WellDefaults::new(0);
+        let well = &mut WellActions::new(0);
 
         move_block(&block, well, block_point, false);
 
@@ -129,7 +130,7 @@ mod tests {
     fn is_move_blocked_for_case(#[case] new_point: WellPoint, #[case] expected: bool) {
         //shape:  BlockShape::new([[0,0],[0,1],[1,1],[1,2]])
         let block = Block::new(BlockType::Z); 
-        let well: &mut Well = &mut WellDefaults::new(0);
+        let well: &mut Well = &mut WellActions::new(0);
         well[20][4] = 1;
         well[20][5] = 1;
         well[21][4] = 1;

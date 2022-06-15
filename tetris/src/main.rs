@@ -1,13 +1,10 @@
-//todo wouter: remove later on when more is implemented
-//#![allow(dead_code)]
-
 use block_bag::RandomBag;
 use game_state::{GameState, Actions};
 use movements::{move_block, drop_block, is_move_blocked, rotate};
 use music::get_music_handler;
 use piston_window::{Event, Loop, Input, ButtonState, Button, Key};
 use renderer::{get_window, TetrisWindow};
-use well::{WellPoint, Freeze, WellDefaults};
+use well::{WellPoint, WellActions};
 
 mod block;
 mod color;
@@ -59,7 +56,6 @@ fn main() {
                        }
                    } */
                 }
-
             },
 
             Event::Input(Input::Button(button_args), _time_stamp) => { 
@@ -75,9 +71,7 @@ fn main() {
     }
 }
 
-fn game_update (game_state : &mut GameState) {
-    //todo wouter: actual update while playing
-
+fn game_update (game_state : &mut GameState) {    
     //when we do nothing, a piece would fall
     //todo wouter : implement pauze-action
 
@@ -90,27 +84,21 @@ fn game_update (game_state : &mut GameState) {
         if is_move_blocked(&game_state.current_block, &game_state.well, new_point) {
             //if we can't move while falling, we need to 'save' the block to the well and pick a new one
             //also we need to check if we aren't gameover. this happens when the saved block would exceed to 0-row at any part
-            Freeze::freeze_block(&mut game_state.well, &game_state.current_block, &game_state.current_block_point);
+            WellActions::freeze_block(&mut game_state.well, &game_state.current_block, &game_state.current_block_point);
             
             //switch blocks
             game_state.current_block = game_state.next_block;
             game_state.next_block = game_state.block_bag.pop().unwrap();
-            game_state.current_block_point = WellDefaults::get_start_position(&game_state.well);
+            game_state.current_block_point = WellActions::get_start_position(&game_state.well);
             RandomBag::refresh_if_needed(&mut game_state.block_bag);
 
+            game_state.well = WellActions::clear_rows(&game_state.well);
 
-            /* TODO
-             game_state.well = clear_complete_rows(game_state.well);
-
-            game_state.ttmo_row = 2;    // Place near top...
-            game_state.ttmo_col = 3;    // ...and near center.
-
-            // THAT'S IT, MAN! GAME OVER, MAN!!
-            if would_collide(&game_state.curr_ttmo, &game_state.well, &game_state.ttmo_row, &game_state.ttmo_col)
+            //if we allready block on our start-position, its done
+            if is_move_blocked(&game_state.current_block, &game_state.well, game_state.current_block_point)
             {
                 game_state.game_over = true;
-            }
-            */
+            }        
         } else {
             game_state.current_block_point.row_ix += 1;
         }

@@ -2,7 +2,7 @@ use crate::block::Block;
 
 // a Tetris-playfield is called a well
 // low row = high up the well
-// normally 10 rows by 24 cols, but we go for 14 by 20
+// normally 10 rows by 24 cols, but we go for 28 rows on 14 cols
 pub type Well = [[u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT];
 
 pub const WELL_COLUMN_COUNT : usize = 14;
@@ -18,13 +18,15 @@ pub struct WellPoint {
     pub col_ix: i8
 }
 
-pub trait WellDefaults {    
+pub trait WellActions {    
     fn new(default_value : u8) -> Self;   
     //todo wouter: can we handle this without reference to self? (because we don't need it)
     fn get_start_position(&self) -> WellPoint;
+    fn freeze_block(&mut self, current_block : &Block, position : &WellPoint);
+    fn clear_rows(&self) -> Well;
 }
 
-impl WellDefaults for Well {
+impl WellActions for Well {
     fn new(default_value : u8) -> Well {
         empty_well(default_value)
     }
@@ -33,13 +35,7 @@ impl WellDefaults for Well {
         //our const is 1-based for readability, our index 0-based (row 1 = index 0)
         WellPoint { row_ix: START_ROW as i8, col_ix: START_COL as i8 }
     }
-}
 
-pub trait Freeze {
-    fn freeze_block(&mut self, current_block : &Block, position : &WellPoint);
-}
-
-impl Freeze for Well {
     fn freeze_block(&mut self, current_block : &Block, position : &WellPoint) {
         //get coördinates of current blockparts and save them to well
         for (i, row) in current_block.shape.into_array().iter().enumerate() {            
@@ -53,6 +49,28 @@ impl Freeze for Well {
                 self[well_row_ix][well_col_ix] = 1;
             }
         }
+    }
+
+    fn clear_rows(&self) -> Well {
+        let new_well = &mut  Well::new(0);
+
+        //remember: highest row_ix=bottom row
+        let mut current_row_ix = WELL_ROW_COUNT-1;
+        for old_row in self.iter().rev() {
+            let filled_part_count = old_row.iter().filter(|&n| *n == 1).count();
+            if filled_part_count == WELL_COLUMN_COUNT || filled_part_count == 0 {
+                //skip filled or empty rows. this actually clears
+                continue;
+            }
+            
+            for (col_ix, value) in old_row.iter().enumerate() { 
+                new_well[current_row_ix][col_ix] = *value;
+            }
+
+            current_row_ix -=1; 
+        }
+
+        *new_well
     }
 }
 
@@ -68,22 +86,22 @@ mod tests {
         
     #[test]
     fn well_new_empty() {
-        let new_well: Well = WellDefaults::new(0);
+        let new_well: Well = WellActions::new(0);
 
         assert_eq!(new_well, [[0u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]);            
     }
 
     #[test]
     fn well_new_filled() {
-        let new_well: Well = WellDefaults::new(1);
+        let new_well: Well = WellActions::new(1);
 
         assert_eq!(new_well, [[1u8; WELL_COLUMN_COUNT]; WELL_ROW_COUNT]);            
     }
 
     #[test]
     fn well_starting_positions() {
-        let new_well: Well = WellDefaults::new(0);
-        let starting_position = WellDefaults::get_start_position(&new_well);
+        let new_well: Well = WellActions::new(0);
+        let starting_position = WellActions::get_start_position(&new_well);
 
         assert_eq!(starting_position.row_ix, START_ROW);
         assert_eq!(starting_position.col_ix, START_COL);      
@@ -91,12 +109,12 @@ mod tests {
 
     #[test]
     fn well_freeze() {
-        let new_well: &mut Well = &mut WellDefaults::new(0);
+        let new_well: &mut Well = &mut WellActions::new(0);
 
         let block = Block::new(BlockType::I);
         let position = WellPoint { row_ix: 20, col_ix: 0 };
 
-        Freeze::freeze_block(new_well, &block, &position);
+        WellActions::freeze_block(new_well, &block, &position);
 
         assert_eq!(new_well[19][2], 0);
         assert_eq!(new_well[20][0], 0);

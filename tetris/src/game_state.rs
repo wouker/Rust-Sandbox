@@ -1,5 +1,5 @@
 // keep track of the state of the game during play
-use crate::{well::{Well, WellDefaults, WellPoint}, block_bag::{BlockBag, RandomBag}, block::Block};
+use crate::{well::{Well, WellActions, WellPoint}, block_bag::{BlockBag, RandomBag}, block::Block};
 
 //how lower speed, how quicker. speed 1 is on each update
 const DEFAULT_SPEED: u8 = 20;
@@ -26,8 +26,8 @@ impl GameState {
         let mut block_bag : BlockBag = RandomBag::get();
         let current = block_bag.pop().unwrap();
         let next = block_bag.pop().unwrap();
-        let well = WellDefaults::new(0);
-        let starting_point = WellDefaults::get_start_position(&well);
+        let well = WellActions::new(0);
+        let starting_point = WellActions::get_start_position(&well);
 
         GameState { 
             game_over: false, 
@@ -45,10 +45,10 @@ impl GameState {
     pub fn handle_game_over(&mut self, blink_counter:i32) -> i32{
         //we want a blink-effect of an empty & filled well (called on every-update, expected +-60 times per second)
         match blink_counter {
-            15 => self.well = WellDefaults::new(0),                
+            15 => self.well = WellActions::new(0),                
             30 => 
             {
-                self.well = WellDefaults::new(1);
+                self.well = WellActions::new(1);
                 return 0;
             },
             _ => ()            
